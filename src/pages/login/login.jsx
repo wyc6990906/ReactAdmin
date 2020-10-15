@@ -3,7 +3,7 @@ import {Form, Icon, Input, Button, message} from "antd";
 import {Redirect} from 'react-router-dom'
 
 import './login.less'
-import logo from '../../assets/images/logo.png'
+import logo from '../../assets/images/cloud.png'
 import {reqLogin} from '../../api/index'
 import memoryUtils from "../../utils/memoryUtils";
 import storageUtils from "../../utils/storageUtils";
@@ -35,6 +35,7 @@ class Login extends Component {
     event.preventDefault()
   }
   validatePwd = (rule, value, callback) => {
+    // Custom Validator
     if (!value) {
       callback('Please input your password!')
     } else if (value.length < 4) {
@@ -57,6 +58,7 @@ class Login extends Component {
     //得到具有强大功能的form对象
     const {form} = this.props
     const {getFieldDecorator} = form
+    //getFieldDecorator 是一个高阶函数 需要接收组件标签
     return (
       <div className="login">
         <header className="login-header">
@@ -67,7 +69,7 @@ class Login extends Component {
           <h2>User Login</h2>
           <Form onSubmit={this.handleSubmit} className="login-form">
             <Item>
-              {getFieldDecorator('username', {
+              {getFieldDecorator('username', { //config obj
                 rules: [
                   {required: true, whitespace: true, message: 'Please input your username!'},
                   {min: 4, message: 'Username should be at least 4 letters!'},
@@ -82,6 +84,7 @@ class Login extends Component {
                 rules: [
                   {
                     validator: this.validatePwd
+                    //  Custom Validator
                   }
                 ],
               })(<Input prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
@@ -101,4 +104,5 @@ class Login extends Component {
 }
 
 const WrapLogin = Form.create()(Login)
+// antd website show Hot to create form prop
 export default WrapLogin

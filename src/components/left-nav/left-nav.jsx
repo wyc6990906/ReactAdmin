@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {Menu, Icon} from 'antd';
 
 import './left-nav.less'
-import logo from '../../assets/images/logo.png'
+import logo from '../../assets/images/cloud.png'
 
 const {SubMenu} = Menu;
 
