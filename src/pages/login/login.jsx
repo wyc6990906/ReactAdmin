@@ -4,7 +4,7 @@ import {Redirect} from 'react-router-dom'
 
 import './login.less'
 import logo from '../../assets/images/cloud.png'
-import {reqLogin} from '../../api/index'
+import {reqLogin} from '../../api'
 import memoryUtils from "../../utils/memoryUtils";
 import storageUtils from "../../utils/storageUtils";
 
@@ -75,7 +75,7 @@ class Login extends Component {
                   {min: 4, message: 'Username should be at least 4 letters!'},
                   {max: 12, message: 'Username should be no more than 12 letters!'},
                   {pattern: /^[a-zA-Z0-9_]+$/, message: 'Username must be letters,number or _!'},
-                ],
+                ],initialValue:'admin'
               })(<Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
                         placeholder="Username"/>)}
             </Item>
