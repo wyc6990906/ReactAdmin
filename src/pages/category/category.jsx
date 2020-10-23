@@ -41,10 +41,10 @@ export default class Category extends Component {
   }
 
 //both cate. and subcate.
-  getCategories = async () => {
+  getCategories = async (parentId) => {
     //display loading
     this.setState({loading: true})
-    const {parentId} = this.state
+    parentId = parentId || this.state.parentId
     //First class Category
     const result = await reqCategories(parentId)
     // hide loading
@@ -68,7 +68,7 @@ export default class Category extends Component {
       parentId: category._id,
       parentName: category.name
     }, () => { // execute when state update and after re render
-      console.log('parentId', this.state.parentId) // right parent id
+      //console.log('parentId', this.state.parentId) // right parent id
       //get subcategory
       this.getCategories()
     })
@@ -92,24 +92,45 @@ export default class Category extends Component {
   }
   addCategory = () => {
     console.log('addCategory()')
+    this.form.validateFields(async (error, values) => {
+      if (!error) {
+        this.setState({showStatus: 0})
+        const {parentId, categoryName} = values
+        this.form.resetFields()
+        const result = await reqAddCategory({categoryName, parentId})
+        if (result.status === 0) {
+          if (parentId === this.state.parentId) {
+            await this.getCategories()
+          } else if (parentId === '0') { //in subCategories add Category,re get category list but don;t show
+            await this.getCategories('0')
+          }
+        }
+      }
+    })
   }
   showUpdateCategory = (category) => {
     this.category = category
     this.setState({showStatus: 2})
   }
-  updateCategory = async () => {
+  updateCategory = () => {
     console.log('updateCategory()')
-    this.setState({showStatus: 0})
-    //  send reqUpdate to renew Category
-    const categoryId = this.category._id
-    const categoryName = this.form.getFieldValue('categoryName')
-    // must to reset input fields not use cache value
-    this.form.resetFields()
-    const result = await reqUpdateCategory({categoryId, categoryName})
-    if (result.status === 0) {
-      //display new Category list
-      await this.getCategories()
-    }
+    this.form.validateFields(async (error, values) => {
+      if (!error) {
+        this.setState({showStatus: 0})
+        //  send reqUpdate to renew Category
+        const categoryId = this.category._id
+        const {categoryName} = values
+        // must to reset input fields not use cache value
+        this.form.resetFields()
+        const result = await reqUpdateCategory({categoryId, categoryName})
+        if (result.status === 0) {
+          //display new Category list
+          await this.getCategories()
+        }
+      }
+
+    })
+
   }
 
 
@@ -156,7 +177,13 @@ export default class Category extends Component {
           onOk={this.addCategory}
           onCancel={this.handleCancel}
         >
-          <AddForm/>
+          <AddForm
+            categories={categories}
+            parentId={parentId}
+            setForm={(form) => {
+              this.form = form
+            }}
+          />
         </Modal>
 
         <Modal
@@ -165,9 +192,11 @@ export default class Category extends Component {
           onOk={this.updateCategory}
           onCancel={this.handleCancel}
         >
-          <UpdateForm categoryName={category ? category.name : null} setForm={(form) => {
-            this.form = form
-          }}/>
+          <UpdateForm categoryName={category ? category.name : null}
+                      setForm={(form) => {
+                        this.form = form
+                      }}
+          />
         </Modal>
       </Card>
     )

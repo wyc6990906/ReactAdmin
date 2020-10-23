@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {Form, Input} from "antd";
 import PropTypes from 'prop-types'
 
+const Item = Form.Item
 
 class UpdateForm extends Component {
   static propTypes = {
@@ -19,11 +20,16 @@ class UpdateForm extends Component {
     const {getFieldDecorator} = this.props.form
     return (
       <Form>
-        {getFieldDecorator('categoryName', {
-          initialValue: categoryName
-        })(
-          <Input placeholder='Enter Category Name...'/>
-        )}
+        <Item>
+          {getFieldDecorator('categoryName', {
+            initialValue: categoryName,
+            rules: [
+              {required: true, message: 'Category name must be entered!'}
+            ]
+          })(
+            <Input placeholder='Enter Category Name...'/>
+          )}
+        </Item>
       </Form>
     )
   }
