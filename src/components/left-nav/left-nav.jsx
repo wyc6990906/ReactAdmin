@@ -41,6 +41,7 @@ class LeftNav extends Component {
   }
   getMenuNodes_reduce = (menuList) => {
     const path = this.props.location.pathname
+
     return menuList.reduce((pre, item) => {
       //向pre中添加<menu.item> or <submenu>
       if (!item.children) {
@@ -54,7 +55,7 @@ class LeftNav extends Component {
         ))
       } else {
         //查找一个与当前请求路径匹配的子Item
-        const selectItem = item.children.find(selectItem => selectItem.key === path)
+        const selectItem = item.children.find(selectItem => path.indexOf(selectItem.key) === 0)
         if (selectItem) {
           //逻辑：首先得是有子元素的元素，如果子元素与当前路径匹配，则自动展开父亲元素
           this.openKey = item.key
@@ -76,13 +77,20 @@ class LeftNav extends Component {
       return pre
     }, [])
   }
+
 //before first render execute once
   componentWillMount() {
     this.menuNodes = this.getMenuNodes_reduce(menuList)
   }
 
   render() {
-    const path = this.props.location.pathname
+    let path = this.props.location.pathname
+    //console.log("path:",path)
+    // fix bug : not select when path is product/detail
+    if (path.indexOf('/product') === 0) {
+      path = '/product'
+      //console.log('newPath:',path)
+    }
     const openKey = this.openKey
 
     return (

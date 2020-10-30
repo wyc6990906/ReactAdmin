@@ -100,9 +100,9 @@ export default class Category extends Component {
         const result = await reqAddCategory({categoryName, parentId})
         if (result.status === 0) {
           if (parentId === this.state.parentId) {
-            await this.getCategories()
+             this.getCategories()
           } else if (parentId === '0') { //in subCategories add Category,re get category list but don;t show
-            await this.getCategories('0')
+             this.getCategories('0')
           }
         }
       }
@@ -125,7 +125,7 @@ export default class Category extends Component {
         const result = await reqUpdateCategory({categoryId, categoryName})
         if (result.status === 0) {
           //display new Category list
-          await this.getCategories()
+           this.getCategories()
         }
       }
 
@@ -169,7 +169,7 @@ export default class Category extends Component {
                columns={this.columns}
                bordered
                rowKey='_id'
-               pagination={{defaultPageSize: 5, showQuickJumper: true}}
+               pagination={{defaultPageSize: 10, showQuickJumper: true}}
                loading={loading}/>
         <Modal
           title="Add Category"
