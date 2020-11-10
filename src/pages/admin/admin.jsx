@@ -25,7 +25,7 @@ export default class Admin extends Component {
       return <Redirect to="/login"/>
     }
     return (
-      <Layout style={{height: '100%'}}>
+      <Layout style={{minHeight: '100%'}}>
         <Sider>
           <LeftNav/>
         </Sider>
@@ -33,7 +33,7 @@ export default class Admin extends Component {
           <Header>
             <Header/>
           </Header>
-          <Content style={{backgroundColor: '#bfa'}}>
+          <Content style={{backgroundColor: '#fff',margin:20}}>
             <Switch>
               <Route path='/home' component={Home}/>
               <Route path='/category' component={Category}/>
@@ -46,7 +46,7 @@ export default class Admin extends Component {
               <Redirect to="/home"/>
             </Switch>
           </Content>
-          <Footer style={{textAlign: 'center', color: '#ccc'}}>Chrome is recommended</Footer>
+          <Footer style={{textAlign: 'center', color: '#ccc',fontSize:'20px'}}>Chrome is recommended</Footer>
         </Layout>
       </Layout>
     )

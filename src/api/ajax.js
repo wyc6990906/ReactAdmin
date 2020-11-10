@@ -30,7 +30,6 @@ export default function ajax(url, data = {}, method = 'GET') {
       //3.fail
       message.error(error.message)
     })
-
   }))
 
 }
