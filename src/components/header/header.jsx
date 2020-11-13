@@ -1,14 +1,16 @@
 import React, {Component} from "react";
 import {withRouter} from 'react-router-dom'
 import {Modal} from "antd";
+import {connect} from "react-redux";
 
 import './header.less'
 import {formateDate} from '../../utils/dateUtils'
-import memoryUtils from '../../utils/memoryUtils'
+//import memoryUtils from '../../utils/memoryUtils'
+//import storageUtils from "../../utils/storageUtils"
 import {reqWeather, reqCityAdcode} from "../../api";
 import menuList from "../../config/menuConfig";
-import storageUtils from "../../utils/storageUtils"
 import LinkButton from "../link-button/link-button";
+import {logout} from '../../redux/actions'
 
 class Header extends Component {
   state = {
@@ -37,7 +39,7 @@ class Header extends Component {
       if (item.key === path) {
         title = item.title
       } else if (item.children) {
-        const cItem = item.children.find(cItem =>path.indexOf(cItem.key)===0)
+        const cItem = item.children.find(cItem => path.indexOf(cItem.key) === 0)
         if (cItem) {
           title = cItem.title
         }
@@ -50,9 +52,15 @@ class Header extends Component {
     Modal.confirm({
       title: 'Do you want to logout?',
       onOk: () => {
-        storageUtils.removeUser()
-        memoryUtils.user = {}
-        this.props.history.replace('/login')
+        // storageUtils.removeUser()
+        //memoryUtils.user = {}
+        this.props.logout()
+        // this.props.history.replace('/login') no need Admin.jsx already control:
+        /*        if (!user || !user._id) {
+                 automatically redirect to login
+                return <Redirect to="/login"/>
+                }
+        * */
       }
     })
   }
@@ -68,8 +76,10 @@ class Header extends Component {
 
   render() {
     const {currentTime, province, city, weather} = this.state
-    const username = memoryUtils.user.username
-    const title = this.getTitle()
+    //const username = memoryUtils.user.username
+    const username = this.props.user.username
+    // const title = this.getTitle()
+    const title = this.props.headTitle
     return (
       <div className="header">
         <div className='header-top'>
@@ -89,4 +99,7 @@ class Header extends Component {
   }
 }
 
-export default withRouter(Header)
+export default connect(
+  state => ({headTitle: state.headTitle, user: state.user}),
+  {logout}
+)(withRouter(Header))

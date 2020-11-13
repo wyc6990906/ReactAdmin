@@ -1,14 +1,17 @@
 import React, {Component} from "react";
 import {Card, Button, Table, Modal, message} from "antd";
+import {connect} from "react-redux";
 
 import {PAGE_SIZE} from "../../utils/constants";
 import {reqRoles, reqAddRole, reqUpdateRole} from "../../api";
 import AddForm from "./add-form";
 import AuthForm from "./auth-form";
-import memoryUtils from "../../utils/memoryUtils";
+// import memoryUtils from "../../utils/memoryUtils";
 import {formateDate} from "../../utils/dateUtils";
+import storageUtils from "../../utils/storageUtils";
+import {logout} from "../../redux/actions";
 
-export default class Role extends Component {
+class Role extends Component {
 
   state = {
     roles: [],// role list
@@ -95,11 +98,23 @@ export default class Role extends Component {
     //get the newest menus from auth-form component
     const menus = this.auth.current.getMenus()
     role.menus = menus
-    role.auth_name = memoryUtils.user.username
+    role.auth_name = this.props.user.username
     role.auth_time = Date.now()
     const result = await reqUpdateRole(role)
     if (result.status === 0) {
-      message.success('Set authorities success!')
+      // if update self 's auth force to quit login
+      if (role._id === this.props.user.role_id) {
+        // memoryUtils.user = {}
+        // storageUtils.removeUser()
+        // this.props.history.replace('/login')
+        this.props.logout()
+        message.info('The current user\'s permissions have changed. Please log in again')
+      } else {
+        message.success('Set authorities success!')
+        this.setState({
+          roles: [...this.state.roles]
+        })
+      }
     } else {
       message.error('Set authorities fail!')
     }
@@ -143,7 +158,15 @@ export default class Role extends Component {
                  bordered
                  rowKey='_id'
                  pagination={{defaultPageSize: PAGE_SIZE, showQuickJumper: true}}
-                 rowSelection={{type: "radio", selectedRowKeys: [role._id]}}
+                 rowSelection={{
+                   type: "radio",
+                   selectedRowKeys: [role._id],
+                   //when user click radio
+                   onSelect: (role) => {
+                     this.setState({role})
+                   }
+                 }}
+
                  onRow={this.onRow}
           />
           <Modal
@@ -172,3 +195,7 @@ export default class Role extends Component {
     )
   }
 }
+export default connect(
+  state => ({user:state.user}),
+  {logout}
+)(Role)

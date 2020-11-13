@@ -11,7 +11,7 @@ import {message} from "antd";
 //Login
 export const reqLogin = (username, password) => ajax('/login', {username, password}, 'POST')
 //Add user
-export const reqAddUser = (user) => ajax('/manage/user/add', user, 'POST')
+export const reqAddOrUpdateUser = (user) => ajax('/manage/user/' + (user._id ? 'update' : 'add'), user, 'POST')
 
 /*
 * jsonp The requested interface requests the function
@@ -74,4 +74,5 @@ export const reqAddOrUpdateProduct = (product) => ajax('/manage/product/' + (pro
 export const reqRoles = () => ajax('/manage/role/list')
 export const reqAddRole = (roleName) => ajax('/manage/role/add', {roleName}, 'POST')
 export const reqUpdateRole = (role) => ajax('manage/role/update', role, 'POST')
-
+export const reqUserList = () => ajax('manage/user/list')
+export const reqDeleteUser = (userId) => ajax('manage/user/delete?userId', {userId}, 'POST')

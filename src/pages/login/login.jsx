@@ -1,23 +1,31 @@
 import React, {Component} from "react";
 import {Form, Icon, Input, Button, message} from "antd";
 import {Redirect} from 'react-router-dom'
+import {connect} from "react-redux";
+
 
 import './login.less'
 import logo from '../../assets/images/cloud.png'
-import {reqLogin} from '../../api'
+/*import {reqLogin} from '../../api'
 import memoryUtils from "../../utils/memoryUtils";
-import storageUtils from "../../utils/storageUtils";
+import storageUtils from "../../utils/storageUtils";*/
+import {login} from "../../redux/actions";
 
 const Item = Form.Item
 
 class Login extends Component {
   handleSubmit = (event) => {
+    event.preventDefault()
     const {form} = this.props
     form.validateFields(async (err, values) => {
       if (!err) {
         //console.log('Received values of form:', values)
         const {username, password} = values
-        const result = await reqLogin(username, password)
+        this.props.login(username,password)
+        this.props.history.replace('/home')
+
+
+     /*   const result = await reqLogin(username, password)
         if (result.status === 0) { //{status:0,data:user}  {status:1,msg:'xxx}
           message.success('login success~')
           //save user in memory
@@ -26,13 +34,12 @@ class Login extends Component {
           //save user in localstorage
           storageUtils.saveUser(user)
           //redirect to /admin
-          this.props.history.replace('/')
+          this.props.history.replace('/home')
         } else {
           message.error(result.msg)
-        }
+        }*/
       }
     })
-    event.preventDefault()
   }
   validatePwd = (rule, value, callback) => {
     // Custom Validator
@@ -51,10 +58,14 @@ class Login extends Component {
 
   render() {
     //if user already login redirect to admin
-    const user = memoryUtils.user
+    // const user = memoryUtils.user
+    const user = this.props.user
     if (user && user._id) {
-      return <Redirect to='/'/>
+      return <Redirect to='/home'/>
     }
+
+    const errorMsg = this.props.user.errorMsg
+
     //得到具有强大功能的form对象
     const {form} = this.props
     const {getFieldDecorator} = form
@@ -66,6 +77,7 @@ class Login extends Component {
           <h1>React:Backstage Management System</h1>
         </header>
         <section className="login-content">
+          {/*{errorMsg? message.error(errorMsg):null}*/}
           <h2>User Login</h2>
           <Form onSubmit={this.handleSubmit} className="login-form">
             <Item>
@@ -105,4 +117,7 @@ class Login extends Component {
 
 const WrapLogin = Form.create()(Login)
 // antd website show Hot to create form prop
-export default WrapLogin
+export default connect(
+  state => ({user:state.user}),
+  {login}
+)(WrapLogin)
