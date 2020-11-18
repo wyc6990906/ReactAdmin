@@ -3,7 +3,7 @@ import {combineReducers,} from "redux";
 import storageUtils from "../utils/storageUtils";
 import {SET_HEAD_TITLE, RECEIVE_USER, SHOW_ERROR_MSG,RESET_USER} from "./actions-types";
 
-const initHeadTitle = 'Home'
+const initHeadTitle = ''
 
 function headTitle(state = initHeadTitle, action) {
   switch (action.type) {
