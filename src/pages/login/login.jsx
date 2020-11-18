@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Form, Icon, Input, Button, message} from "antd";
+import {Form, Icon, Input, Button} from "antd";
 import {Redirect} from 'react-router-dom'
 import {connect} from "react-redux";
 
@@ -64,7 +64,7 @@ class Login extends Component {
       return <Redirect to='/home'/>
     }
 
-    const errorMsg = this.props.user.errorMsg
+    //const errorMsg = this.props.user.errorMsg
 
     //得到具有强大功能的form对象
     const {form} = this.props
